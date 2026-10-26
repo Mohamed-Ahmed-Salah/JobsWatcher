@@ -1,0 +1,16 @@
+# JobsWatcher — 24/7 with one command:  docker compose up -d
+services:
+  jobswatcher:
+    build: .
+    image: jobswatcher:latest
+    container_name: jobswatcher
+    restart: unless-stopped
+    environment:
+      # how often to scan (minutes)
+      RUN_EVERY_MIN: "15"
+      # secrets (optional here if already in config.json; env wins)
+      TELEGRAM_BOT_TOKEN: "${TELEGRAM_BOT_TOKEN:-}"
+      TELEGRAM_CHAT_ID: "${TELEGRAM_CHAT_ID:-}"
+    volumes:
+      - ./config.json:/app/config.json:ro   # your settings
+      - ./data:/app/data                     # persistent "seen" store + logs

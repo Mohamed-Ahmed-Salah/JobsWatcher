@@ -1,0 +1,57 @@
+# Run JobsWatcher in the cloud — free, no server needed.
+#
+# Setup (one time):
+#   1. Put your real keywords/locations in config.example.json (NO secrets there).
+#   2. Repo → Settings → Secrets and variables → Actions → add:
+#        TELEGRAM_BOT_TOKEN   and   TELEGRAM_CHAT_ID
+#   3. Actions tab → "JobsWatcher" → "Run workflow" with seed = true (first run,
+#      marks current jobs seen so you aren't flooded). After that the schedule
+#      sends only NEW jobs.
+#
+# Note: GitHub's scheduler is best-effort (runs may be delayed/skipped on the
+# free tier) and pauses after 60 days of repo inactivity.
+
+name: JobsWatcher
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"      # every 30 minutes (UTC)
+  workflow_dispatch:
+    inputs:
+      seed:
+        description: "Seed current jobs as seen (send nothing)"
+        type: boolean
+        default: false
+
+concurrency:
+  group: jobswatcher
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # rolling "seen" state: restore the latest, save a fresh one each run
+      - name: Restore state
+        uses: actions/cache@v4
+        with:
+          path: data
+          key: jobswatcher-state-${{ github.run_id }}
+          restore-keys: jobswatcher-state-
+
+      - name: Run JobsWatcher
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.seed }}" = "true" ]; then
+            python -m jobswatcher --init
+          else
+            python -m jobswatcher
+          fi

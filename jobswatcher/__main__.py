@@ -10,6 +10,7 @@
 
 import argparse
 import sys
+import time
 
 from . import config as cfgmod
 from . import pipeline
@@ -21,6 +22,8 @@ def main(argv=None):
     ap.add_argument("--dry-run", action="store_true", help="print new jobs, don't send/save")
     ap.add_argument("--init", action="store_true", help="mark current jobs seen, send nothing")
     ap.add_argument("--whoami", action="store_true", help="print your Telegram chat id")
+    ap.add_argument("--loop", type=int, metavar="MIN",
+                    help="run forever, every MIN minutes (used by Docker; no external cron needed)")
     ap.add_argument("--config", help="path to a config file")
     args = ap.parse_args(argv)
 
@@ -33,6 +36,16 @@ def main(argv=None):
             return 1
         tg.whoami(token)
         return 0
+
+    if args.loop and args.loop > 0:
+        pipeline.log("loop mode: running every %d minute(s). Ctrl-C to stop." % args.loop)
+        while True:
+            try:
+                pipeline.run(cfg, dry_run=args.dry_run, init=args.init)
+            except Exception as e:
+                pipeline.log("run error: %s" % e)
+            args.init = False   # only the very first loop may seed
+            time.sleep(args.loop * 60)
 
     pipeline.run(cfg, dry_run=args.dry_run, init=args.init)
     return 0

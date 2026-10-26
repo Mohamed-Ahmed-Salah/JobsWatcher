@@ -9,10 +9,10 @@
 <br>
 
 ![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Dependencies](https://img.shields.io/badge/Dependencies-None-2ea44f?style=for-the-badge)
 ![Delivery](https://img.shields.io/badge/Delivery-Telegram-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
-![Platform](https://img.shields.io/badge/Runs%20on-Linux%20·%20macOS%20·%20Windows-555?style=for-the-badge)
 
 </div>
 
@@ -20,17 +20,11 @@
 
 <div align="center">
 
-### 📬 What a job alert looks like
+### 📬 What your job alerts look like
+
+<img src="screenshots/alert.png" alt="JobsWatcher sending job alerts to Telegram" width="340">
 
 </div>
-
-```text
-🆕 Mobile Developer (React Native)
-🏢 Acme Technologies
-📍 Riyadh, Saudi Arabia  ·  🗓️ 2026-02-10
-📡 Linkedin
-         [ 🔗 Open job ]
-```
 
 ---
 
@@ -150,20 +144,50 @@ python3 -m jobswatcher --dry-run
 
 ## ⏰ Keep it running 24/7
 
+Pick whichever fits you — all do the same thing: scan on a schedule, send only new jobs.
+
+### 🐳 Docker — recommended (one command, runs anywhere)
+
+The image **self-schedules** (loops every `RUN_EVERY_MIN` minutes) and keeps its "seen" state in a mounted `data/` folder. No cron, no Python setup.
+
+```bash
+# 1. configure
+cp config.example.json config.json      # set keywords + telegram token/chat_id
+
+# 2. seed once (so the first run doesn't flood you)
+docker compose run --rm jobswatcher python -m jobswatcher --init
+
+# 3. run forever
+docker compose up -d
+```
+
+Check it:
+```bash
+docker compose logs -f        # watch it work
+docker compose down           # stop
+```
+
+> Change the frequency by editing `RUN_EVERY_MIN` in `docker-compose.yml`.
+> Prefer plain Docker? `docker build -t jobswatcher . && docker run -d --restart unless-stopped -v $(pwd)/config.json:/app/config.json:ro -v $(pwd)/data:/app/data jobswatcher`
+
+### ☁️ GitHub Actions — free cloud, no server at all
+
+Run it on GitHub's infrastructure for free:
+1. Put your keywords/locations in `config.example.json` (no secrets).
+2. Repo → **Settings → Secrets and variables → Actions** → add `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`.
+3. **Actions** tab → **JobsWatcher** → **Run workflow** with **seed = true** once, then it runs on schedule.
+
+Workflow is already included at [`.github/workflows/watch.yml`](.github/workflows/watch.yml) (every 30 min; state persists via cache).
+
 <details>
-<summary><b>🐧 Option A — cron (simplest)</b></summary>
+<summary><b>🐧 Other options — cron / systemd</b></summary>
 
-Run `crontab -e` and add (checks every 15 minutes):
-
+**cron** (every 15 min):
 ```cron
 */15 * * * * cd /path/to/JobsWatcher && /usr/bin/python3 -m jobswatcher >> data/cron.log 2>&1
 ```
-</details>
 
-<details>
-<summary><b>⚙️ Option B — systemd (best for a server/VPS)</b></summary>
-
-See [`deploy/DEPLOY.md`](deploy/DEPLOY.md) — includes ready-made `.service` + `.timer` files. A $5/month VPS runs this comfortably 24/7.
+**systemd** (server/VPS): ready-made units in [`deploy/DEPLOY.md`](deploy/DEPLOY.md).
 </details>
 
 ---
