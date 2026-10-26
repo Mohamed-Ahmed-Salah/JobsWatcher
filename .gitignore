@@ -1,0 +1,9 @@
+# secrets & runtime state — never commit
+config.json
+data/
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.DS_Store

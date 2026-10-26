@@ -1,0 +1,11 @@
+[Unit]
+Description=JobsWatcher — scan jobs and send new ones to Telegram
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# edit User and WorkingDirectory to match your install:
+User=jobswatcher
+WorkingDirectory=/home/jobswatcher/JobsWatcher
+ExecStart=/usr/bin/python3 -m jobswatcher

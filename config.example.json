@@ -1,0 +1,49 @@
+{
+  "telegram": {
+    "bot_token": "PASTE_TOKEN_FROM_BOTFATHER",
+    "chat_id": "PASTE_YOUR_CHAT_ID"
+  },
+
+  "search": {
+    "keywords": [
+      "flutter",
+      "react native",
+      "mobile developer",
+      "android developer",
+      "ios developer"
+    ],
+    "exclude_title_terms": [
+      "senior",
+      "intern",
+      "manager"
+    ],
+    "locations": [
+      "Saudi Arabia",
+      "United Arab Emirates",
+      "Remote"
+    ],
+    "location_terms": [],
+    "jobage_days": 7,
+    "require_title_match": true
+  },
+
+  "sources": {
+    "linkedin": { "enabled": true, "min_interval_minutes": 30 },
+    "remotive": { "enabled": true },
+    "ats": {
+      "enabled": false,
+      "greenhouse": [],
+      "lever": [],
+      "workable": [],
+      "smartrecruiters": [],
+      "ashby": []
+    }
+  },
+
+  "options": {
+    "max_send_per_run": 60,
+    "dedup_similar": true,
+    "idle_notice_minutes": 0,
+    "request_delay_seconds": 3
+  }
+}
