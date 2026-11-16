@@ -22,7 +22,7 @@ def load(path=None):
     candidates += [ROOT / "config.json", ROOT / "config.example.json"]
     for p in candidates:
         if p and pathlib.Path(p).exists():
-            with open(p) as f:
+            with open(p, encoding="utf-8") as f:
                 cfg = json.load(f)
             return _with_env(cfg)
     raise FileNotFoundError("No config.json or config.example.json found.")

@@ -16,7 +16,7 @@ _PRUNE_DAYS = 90
 
 def _load(path, default):
     try:
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             return json.load(f)
     except Exception:
         return default
@@ -24,7 +24,7 @@ def _load(path, default):
 
 def _save(path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w") as f:
+    with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f)
 
 

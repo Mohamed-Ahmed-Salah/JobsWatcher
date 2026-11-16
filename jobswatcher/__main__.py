@@ -18,6 +18,12 @@ from . import telegram as tg
 
 
 def main(argv=None):
+    # Windows consoles default to cp1252 and choke on emoji in job cards
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
     ap = argparse.ArgumentParser(prog="jobswatcher", description="Send new jobs to Telegram.")
     ap.add_argument("--dry-run", action="store_true", help="print new jobs, don't send/save")
     ap.add_argument("--init", action="store_true", help="mark current jobs seen, send nothing")

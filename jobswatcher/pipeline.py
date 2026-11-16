@@ -23,7 +23,7 @@ def log(msg):
     print(line, flush=True)
     try:
         LOG.parent.mkdir(parents=True, exist_ok=True)
-        with open(LOG, "a") as f:
+        with open(LOG, "a", encoding="utf-8") as f:
             f.write(line + "\n")
     except Exception:
         pass
