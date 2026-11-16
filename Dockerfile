@@ -3,7 +3,7 @@ FROM python:3.12-slim
 
 LABEL org.opencontainers.image.title="JobsWatcher" \
       org.opencontainers.image.description="Configurable job watcher that sends new jobs to Telegram" \
-      org.opencontainers.image.source="https://github.com/ashrafmohammedsalih/JobsWatcher" \
+      org.opencontainers.image.source="https://github.com/Mohamed-Ahmed-Salah/JobsWatcher" \
       org.opencontainers.image.licenses="MIT"
 
 WORKDIR /app

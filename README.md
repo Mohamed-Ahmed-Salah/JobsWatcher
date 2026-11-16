@@ -84,7 +84,7 @@
 ### 1️⃣ Get the code
 
 ```bash
-git clone https://github.com/ashrafmohammedsalih/JobsWatcher.git
+git clone https://github.com/Mohamed-Ahmed-Salah/JobsWatcher.git
 cd JobsWatcher
 cp config.example.json config.json
 ```
